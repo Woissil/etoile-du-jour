@@ -1060,17 +1060,6 @@ s32 play_mode_normal(void) {
 
     pss_begin_slide();
 
-    if (gPlayer1Controller->buttonPressed & U_JPAD) {
-        if (gLoadedGraphNodes[MODEL_STAR] != NULL && bhvSpawnedStar != NULL) {
-            struct Object *star = spawn_object(gMarioState->marioObj, MODEL_STAR, bhvStar);
-            if (star != NULL) {
-                star->oPosX = gMarioState->pos[0];
-                star->oPosY = gMarioState->pos[1] + 250.0f;
-                star->oPosZ = gMarioState->pos[2];
-            }
-        }
-    }
-
     if (gPlayer1Controller->buttonPressed & L_TRIG) {
         reset_level();
     }
