@@ -16,3 +16,6 @@
 #include "water_splash/geo.inc.c"
 #include "sparkle_animation/geo.inc.c"
 #include "mario/geo.inc.c"
+
+#include "low_poly_mario/geo.inc.c"
+#include "skinned/geo.inc.c"

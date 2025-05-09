@@ -32,6 +32,7 @@
 #include "puppyprint.h"
 #include "level_commands.h"
 #include "debug.h"
+#include "include/gfx_dimensions.h"
 
 #include "config.h"
 
@@ -1004,6 +1005,42 @@ void basic_update(void) {
     }
 }
 
+void reset_level(void) {
+    if (gCurrLevelNum != LEVEL_NONE) {
+        gMarioState->numCoins = 0;
+        gHudDisplay.coins = 0;
+        fade_into_special_warp(gCurrLevelNum, 0);
+    }
+}
+
+void select_model(void) {
+    static s32 selectedModel = 0;
+    s32 textX = 80;
+
+    print_text(textX, 180, "SELECT MARIO MODEL");
+    print_text(textX, 160, "BASIC MARIO");
+    print_text(textX, 140, "LOW POLY MARIO");
+
+    s32 hudStarsX = GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(260);
+    s32 starY = (selectedModel == 0) ? 160 : 140;
+
+    print_text(hudStarsX, starY, "^");
+
+    if (gPlayer1Controller->buttonPressed & D_JPAD) {
+        selectedModel = (selectedModel + 1) % 2;
+        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+    } else if (gPlayer1Controller->buttonPressed & U_JPAD) {
+        selectedModel = (selectedModel - 1 + 2) % 2;
+        play_sound(SOUND_MENU_CHANGE_SELECT, gGlobalSoundSource);
+    }
+
+    if (selectedModel == 0) {
+        gMarioState->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_MARIO];
+    } else {
+        gMarioState->marioObj->header.gfx.sharedChild = gLoadedGraphNodes[MODEL_LOW_POLY_MARIO];
+    }
+}
+
 s32 play_mode_normal(void) {
 #ifndef DISABLE_DEMO
     if (gCurrDemoInput != NULL) {
@@ -1016,6 +1053,20 @@ s32 play_mode_normal(void) {
         }
     }
 #endif
+
+    if (gPlayer1Controller->buttonPressed & L_TRIG) {
+        reset_level();
+    }
+
+    static int isDisplayed = 0;
+
+    if (gPlayer1Controller->buttonPressed & L_JPAD) {
+        isDisplayed = !isDisplayed;
+    }
+
+    if (isDisplayed) {
+        select_model();
+    }
 
     warp_area();
     check_instant_warp();
@@ -1383,6 +1434,7 @@ s32 lvl_set_current_level(UNUSED s16 initOrUpdate, s32 levelNum) {
     sWarpCheckpointActive = FALSE;
     gCurrLevelNum = levelNum;
     gCurrCourseNum = gLevelToCourseNumTable[levelNum - 1];
+	if (gCurrLevelNum == LEVEL_BOB) return 0;
 
     if (gCurrDemoInput != NULL || gCurrCreditsEntry != NULL || gCurrCourseNum == COURSE_NONE) {
         return FALSE;
