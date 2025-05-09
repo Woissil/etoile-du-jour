@@ -13,7 +13,7 @@
 /**
  * Enable lives and the lives counter. The number next to the define is the number of lives you start with.
  */
-// #define ENABLE_LIVES 4
+#define ENABLE_LIVES 999
 
 /**
  * This can be 0..127.
@@ -97,4 +97,4 @@
  * The level that the game starts with immediately after file select.
  * The levelscript needs to have a MARIO_POS command for this to work.
  */
-#define START_LEVEL LEVEL_CASTLE_GROUNDS
+#define START_LEVEL LEVEL_BOB

@@ -33,6 +33,9 @@
 #include "level_commands.h"
 #include "debug.h"
 #include "include/gfx_dimensions.h"
+#include "include/behavior_data.h"
+#include "spawn_object.h"
+#include "interaction.h"
 
 #include "config.h"
 
@@ -1017,12 +1020,12 @@ void select_model(void) {
     static s32 selectedModel = 0;
     s32 textX = 80;
 
-    print_text(textX, 180, "SELECT MARIO MODEL");
-    print_text(textX, 160, "BASIC MARIO");
-    print_text(textX, 140, "LOW POLY MARIO");
+    print_text(textX, 160, "SELECT MARIO MODEL");
+    print_text(textX, 140, "BASIC MARIO");
+    print_text(textX, 120, "LOW POLY MARIO");
 
     s32 hudStarsX = GFX_DIMENSIONS_RECT_FROM_RIGHT_EDGE(260);
-    s32 starY = (selectedModel == 0) ? 160 : 140;
+    s32 starY = (selectedModel == 0) ? 140 : 120;
 
     print_text(hudStarsX, starY, "^");
 
@@ -1042,6 +1045,7 @@ void select_model(void) {
 }
 
 s32 play_mode_normal(void) {
+    struct MarioState *m = gMarioState;
 #ifndef DISABLE_DEMO
     if (gCurrDemoInput != NULL) {
         print_intro_text();
@@ -1053,6 +1057,19 @@ s32 play_mode_normal(void) {
         }
     }
 #endif
+
+    pss_begin_slide();
+
+    if (gPlayer1Controller->buttonPressed & U_JPAD) {
+        if (gLoadedGraphNodes[MODEL_STAR] != NULL && bhvSpawnedStar != NULL) {
+            struct Object *star = spawn_object(gMarioState->marioObj, MODEL_STAR, bhvStar);
+            if (star != NULL) {
+                star->oPosX = gMarioState->pos[0];
+                star->oPosY = gMarioState->pos[1] + 250.0f;
+                star->oPosZ = gMarioState->pos[2];
+            }
+        }
+    }
 
     if (gPlayer1Controller->buttonPressed & L_TRIG) {
         reset_level();

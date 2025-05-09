@@ -621,7 +621,7 @@ void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
 
             case 80:
                 if (!(m->actionArg & 1)) {
-                    level_trigger_warp(m, WARP_OP_STAR_EXIT);
+                    fade_into_special_warp(gCurrLevelNum, 0);
                 } else {
                     enable_time_stop();
                     create_dialog_box_with_response(gLastCompletedStarNum == 7 ? DIALOG_013 : DIALOG_014);
@@ -648,6 +648,7 @@ void general_star_dance_handler(struct MarioState *m, s32 isInWater) {
 }
 
 s32 act_star_dance(struct MarioState *m) {
+    // pss_end_slide();
     m->faceAngle[1] = m->area->camera->yaw;
     set_mario_animation(m, m->actionState == ACT_STATE_STAR_DANCE_RETURN ? MARIO_ANIM_RETURN_FROM_STAR_DANCE
                                                                          : MARIO_ANIM_STAR_DANCE);
